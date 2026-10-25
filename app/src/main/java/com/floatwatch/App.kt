@@ -69,6 +69,7 @@ data class StopwatchConfig(
     var showMillis: Boolean = true,
     var showHours: Boolean = true,
     var digital: Boolean = false,
+    var transparency: Int = 0,
     var posX: Int = -1,
     var posY: Int = -1
 ) {
@@ -76,7 +77,7 @@ data class StopwatchConfig(
         put("id", id); put("name", name); put("countdown", countdown); put("countdownMs", countdownMs)
         put("vibrate", vibrate); put("repeat", repeat); put("size", size)
         put("runningColor", runningColor); put("pauseColor", pauseColor); put("textColor", textColor)
-        put("showMillis", showMillis); put("showHours", showHours); put("digital", digital)
+        put("showMillis", showMillis); put("showHours", showHours); put("digital", digital); put("transparency", transparency)
         put("posX", posX); put("posY", posY)
     }
 
@@ -95,6 +96,7 @@ data class StopwatchConfig(
                 showMillis = o.optBoolean("showMillis", d.showMillis),
                 showHours = o.optBoolean("showHours", d.showHours),
                 digital = o.optBoolean("digital", d.digital),
+                transparency = o.optInt("transparency", d.transparency),
                 posX = o.optInt("posX", -1),
                 posY = o.optInt("posY", -1)
             )
@@ -262,7 +264,7 @@ class OverlayService : Service() {
         val n = timers.size
         return Notification.Builder(this, CHANNEL)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("Floating Stopwatch")
+            .setContentTitle("TimerStack")
             .setContentText(if (n == 1) "1 timer on screen" else "$n timers on screen")
             .setContentIntent(pi)
             .setOngoing(true)
@@ -445,7 +447,9 @@ class OverlayService : Service() {
         }
 
         private fun applyStyle() {
-            bg.setColor(if (running) cfg.runningColor else cfg.pauseColor)
+            val base = if (running) cfg.runningColor else cfg.pauseColor
+            val alpha = ((100 - cfg.transparency.coerceIn(0, 100)) * 255 / 100)
+            bg.setColor((base and 0x00FFFFFF) or (alpha shl 24))
             label.setTextColor(cfg.textColor)
             label.textSize = 16f + cfg.size * 0.5f
             label.typeface = if (cfg.digital) Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
@@ -505,23 +509,26 @@ class MainActivity : Activity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(12), dp(12), dp(12), dp(24))
         }
+        col.addView(TextView(this).apply {
+            text = "ⓘ  Switch on = float on screen  •  Tap timer = start/pause\n" +
+                "Hold timer = reset/edit/close  •  Drag = move  •  Tap card = settings"
+            textSize = 13f
+            setTextColor(Color.parseColor("#C8C8C8"))
+            background = GradientDrawable().apply {
+                cornerRadius = dp(10).toFloat(); setColor(Color.parseColor("#1F1F1F"))
+            }
+            setPadding(dp(12), dp(8), dp(12), dp(8))
+            layoutParams = LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(10) }
+            setOnClickListener { showGuide(force = true) }
+        })
         list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         col.addView(list)
         col.addView(Button(this).apply {
             text = "+ Add stopwatch"
             setOnClickListener { addStopwatch() }
         })
-        col.addView(TextView(this).apply {
-            text = "Turn a switch on to float that timer over your screen.\n" +
-                "• Tap the floating timer: start / pause\n" +
-                "• Hold it: reset, edit or close\n" +
-                "• Drag it: move it anywhere\n" +
-                "• Tap a card here to edit its settings"
-            setTextColor(Color.parseColor("#9E9E9E"))
-            textSize = 14f
-            setPadding(dp(4), dp(16), dp(4), 0)
-        })
         setContentView(ScrollView(this).apply { addView(col) })
+        if (savedInstanceState == null) showGuide(force = false)
 
         if (Build.VERSION.SDK_INT >= 33) {
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
@@ -641,10 +648,44 @@ class MainActivity : Activity() {
             .show()
     }
 
+    /** "How to use" popup. Shows on every launch until "Never show this again" is ticked. */
+    private fun showGuide(force: Boolean) {
+        val prefs = getSharedPreferences("floatwatch", Context.MODE_PRIVATE)
+        if (!force && prefs.getBoolean("hide_guide", false)) return
+        val msg = TextView(this).apply {
+            text = "1. Turn on a timer's switch. It floats on top of every app.\n" +
+                "2. Tap the floating timer to start or pause.\n" +
+                "3. Hold it to reset, edit or close it.\n" +
+                "4. Drag it to move it anywhere.\n" +
+                "5. Tap a card here to change colors, size, transparency and countdown. Hold a card to delete it.\n\n" +
+                "The first time, allow \"Display over other apps\" when asked.\n" +
+                "Tap the ⓘ bar at the top anytime to see this again."
+            textSize = 16f
+            setTextColor(Color.WHITE)
+            setLineSpacing(0f, 1.2f)
+        }
+        val box = CheckBox(this).apply {
+            text = "Never show this again"
+            isChecked = prefs.getBoolean("hide_guide", false)
+            setOnCheckedChangeListener { _, v -> prefs.edit().putBoolean("hide_guide", v).apply() }
+        }
+        val lay = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(24), dp(8), dp(24), 0)
+            addView(msg)
+            addView(box, LinearLayout.LayoutParams(-2, -2).apply { topMargin = dp(12) })
+        }
+        AlertDialog.Builder(this)
+            .setTitle("How to use TimerStack")
+            .setView(ScrollView(this).apply { addView(lay) })
+            .setPositiveButton("Got it", null)
+            .show()
+    }
+
     private fun askOverlayPermission() {
         AlertDialog.Builder(this)
             .setTitle("Allow display over other apps")
-            .setMessage("To float timers on top of other apps, turn on \"Display over other apps\" for Floating Stopwatch on the next screen, then come back.")
+            .setMessage("To float timers on top of other apps, turn on \"Display over other apps\" for TimerStack on the next screen, then come back.")
             .setPositiveButton("Open settings") { _, _ ->
                 startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
             }
@@ -700,7 +741,8 @@ class EditActivity : Activity() {
             switchRow("Vibrate on countdown finish", null, cfg.vibrate) { cfg.vibrate = it; save() }
             switchRow("Repeat when finished", null, cfg.repeat) { cfg.repeat = it; save() }
         }
-        sizeRow()
+        sliderRow("Stopwatch size", null, cfg.size) { cfg.size = it; save() }
+        sliderRow("Background transparency", "%", cfg.transparency) { cfg.transparency = it; save() }
         colorRow("Running color", "Background color while running", cfg.runningColor) {
             cfg.runningColor = it; save(); rebuild()
         }
@@ -764,17 +806,19 @@ class EditActivity : Activity() {
         r.setOnClickListener { pickColor(color, onPick) }
     }
 
-    private fun sizeRow() {
-        col.addView(TextView(this).apply {
-            text = "Stopwatch size"; textSize = 18f; setTextColor(Color.WHITE)
+    private fun sliderRow(title: String, unit: String?, value: Int, onChange: (Int) -> Unit) {
+        fun label(v: Int) = if (unit == null) title else "$title: $v$unit"
+        val tv = TextView(this).apply {
+            text = label(value); textSize = 18f; setTextColor(Color.WHITE)
             setPadding(0, dp(14), 0, dp(8))
-        })
+        }
+        col.addView(tv)
         col.addView(SeekBar(this).apply {
             max = 100
-            progress = cfg.size
+            progress = value
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(sb: SeekBar, p: Int, fromUser: Boolean) {
-                    if (fromUser) { cfg.size = p; save() }
+                    if (fromUser) { tv.text = label(p); onChange(p) }
                 }
                 override fun onStartTrackingTouch(sb: SeekBar) {}
                 override fun onStopTrackingTouch(sb: SeekBar) {}
