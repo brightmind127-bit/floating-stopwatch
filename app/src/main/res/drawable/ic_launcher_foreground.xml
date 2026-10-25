@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TimerStack launcher icon: "Chrono Float" stopwatch -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#14213D" android:pathData="M0,0 h108 v108 h-108 Z"/>
+    <group android:scaleX="0.6" android:scaleY="0.6" android:translateX="9" android:translateY="10.2">
+        <path android:fillColor="#1B2B4F" android:pathData="M19,82 a56,56 0 1,0 112,0 a56,56 0 1,0 -112,0 Z"/>
+        <path android:fillColor="#E5E5E5" android:pathData="M70,24 h10 a3,3 0 0,1 3,3 v4 a3,3 0 0,1 -3,3 h-10 a3,3 0 0,1 -3,-3 v-4 a3,3 0 0,1 3,-3 Z"/>
+        <path android:fillColor="#E5E5E5" android:pathData="M71,32 h8 v10 h-8 Z"/>
+        <group android:rotation="45" android:pivotX="110" android:pivotY="44">
+            <path android:fillColor="#E5E5E5" android:pathData="M106,40 h9 a2,2 0 0,1 2,2 v4 a2,2 0 0,1 -2,2 h-9 a2,2 0 0,1 -2,-2 v-4 a2,2 0 0,1 2,-2 Z"/>
+        </group>
+        <path android:fillColor="#E5E5E5" android:pathData="M35,82 a40,40 0 1,0 80,0 a40,40 0 1,0 -80,0 Z"/>
+        <path android:fillColor="#FFFFFF" android:pathData="M41,82 a34,34 0 1,0 68,0 a34,34 0 1,0 -68,0 Z"/>
+        <path android:fillColor="#FFE2B0" android:pathData="M75,52 A30,30 0 0,1 100.98,97 L75,82 Z"/>
+        <group android:rotation="0" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,56"/>
+        </group>
+        <group android:rotation="30" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <group android:rotation="60" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <group android:rotation="90" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,56"/>
+        </group>
+        <group android:rotation="120" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <group android:rotation="150" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <group android:rotation="180" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,56"/>
+        </group>
+        <group android:rotation="210" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <group android:rotation="240" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <group android:rotation="270" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,56"/>
+        </group>
+        <group android:rotation="300" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <group android:rotation="330" android:pivotX="75" android:pivotY="82">
+            <path android:strokeColor="#14213D" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M75,51 L75,55"/>
+        </group>
+        <path android:strokeColor="#FCA311" android:strokeWidth="4.5" android:strokeLineCap="round" android:pathData="M75,82 L97.5,95"/>
+        <path android:fillColor="#14213D" android:pathData="M69.5,82 a5.5,5.5 0 1,0 11.0,0 a5.5,5.5 0 1,0 -11.0,0 Z"/>
+        <path android:fillColor="#FCA311" android:pathData="M73,82 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 Z"/>
+    </group>
+</vector>
